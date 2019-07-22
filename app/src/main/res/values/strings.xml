@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">News App</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_news_website">NewsWebsiteActivity</string>
+    <string name="splash_description">Cute seals on the splash screen</string>
+    <string name="main_title">News</string>
+</resources>
