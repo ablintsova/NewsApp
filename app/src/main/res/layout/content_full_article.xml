@@ -6,10 +6,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:showIn="@layout/activity_news_website"
-        tools:context=".NewsWebsiteActivity">
+        tools:showIn="@layout/activity_full_article"
+        tools:context=".FullArticleActivity">
 
     <WebView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:id="@+id/wvNews"/>
+            android:layout_height="match_parent" android:id="@+id/wvArticle"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
