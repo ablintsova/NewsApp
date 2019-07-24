@@ -1,4 +1,4 @@
-package com.example.newsapp
+package com.example.newsapp.model
 
 import android.os.AsyncTask
 import android.util.Log
@@ -11,12 +11,13 @@ enum class DownloadStatus {
     OK, IDLE, NOT_INITIALISED, FAILED_OR_EMPTY, PERMISSIONS_ERROR, ERROR
 }
 
-interface OnDownloadComplete {
-    fun onDownloadComplete(data: String, status: DownloadStatus)
-}
+class RawData(private val listener: IDownloadComplete) : AsyncTask<String, Void, String>() {
 
-class RawData(private val listener: OnDownloadComplete) : AsyncTask<String, Void, String>() {
     private var downloadStatus = DownloadStatus.IDLE
+
+    interface IDownloadComplete {
+        fun onDownloadComplete(data: String, status: DownloadStatus)
+    }
 
     override fun onPostExecute(result: String) {
 

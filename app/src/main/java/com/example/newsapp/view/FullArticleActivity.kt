@@ -1,7 +1,8 @@
-package com.example.newsapp
+package com.example.newsapp.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.newsapp.R
 
 import kotlinx.android.synthetic.main.activity_full_article.toolbar
 import kotlinx.android.synthetic.main.content_full_article.*

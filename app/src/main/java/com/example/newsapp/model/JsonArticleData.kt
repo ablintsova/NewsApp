@@ -1,27 +1,29 @@
-package com.example.newsapp
+package com.example.newsapp.model
 
 import android.os.AsyncTask
 import android.util.Log
 import org.json.JSONObject
 import java.lang.Exception
 
-interface OnDataAvailable {
-    fun OnDataAvailable(data: List<Article>)
-    fun onError(exception: Exception)
-}
-class JsonArticleData(private val listener: OnDataAvailable) : AsyncTask<String, Void, ArrayList<Article>>() {
+
+class JsonArticleData(private val listener: IDataAvailable) : AsyncTask<String, Void, ArrayList<Article>>() {
+
+    interface IDataAvailable {
+        fun onDataAvailable(data: List<Article>)
+        fun onError(exception: Exception)
+    }
 
     override fun onPostExecute(result: ArrayList<Article>) {
         super.onPostExecute(result)
         Log.d("Json Article Data", "onPostExecute result: $result")
-        listener.OnDataAvailable(result)
+        listener.onDataAvailable(result)
     }
 
     override fun doInBackground(vararg params: String?): ArrayList<Article> {
         val articleList = ArrayList<Article>()
 
         try {
-            val jsonData = JSONObject(params[0])
+            val jsonData = JSONObject(params[0]!!)
             val itemsArray = jsonData.getJSONArray("articles")
 
             for (i in 0 until itemsArray.length()) {
