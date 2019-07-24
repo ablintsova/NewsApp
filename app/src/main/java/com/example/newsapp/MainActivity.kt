@@ -1,8 +1,11 @@
 package com.example.newsapp
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,7 +15,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.lang.Exception
 
-class MainActivity : AppCompatActivity(), OnDownloadComplete, OnDataAvailable {
+class MainActivity : AppCompatActivity(),
+    OnDownloadComplete,
+    OnDataAvailable,
+    OnRecyclerClickListener {
 
     private val recyclerViewAdapter = RecyclerViewAdapter(ArrayList())
 
@@ -22,7 +28,7 @@ class MainActivity : AppCompatActivity(), OnDownloadComplete, OnDataAvailable {
         setSupportActionBar(toolbar)
 
         rvArticleList.layoutManager = LinearLayoutManager(this)
-        //rvArticleList.addOnItemTouchListener(RecyclerItemClickListener)
+        rvArticleList.addOnItemTouchListener(RecyclerItemClickListener(this, rvArticleList, this))
         rvArticleList.adapter = recyclerViewAdapter
         val url = createUri("https://newsapi.org/v2/everything",
                             "android",
@@ -60,6 +66,15 @@ class MainActivity : AppCompatActivity(), OnDownloadComplete, OnDataAvailable {
     }
 
     override fun onError(exception: Exception) {
-        Log.e("Main Activity", exception.message)
+        Log.e("Main Activity", exception.message!!)
+    }
+
+    override fun onItemClick(view: View, position: Int) {
+        val article = recyclerViewAdapter.getArticle(position)
+        if (article != null) {
+            val intent = Intent(this, FullArticleActivity::class.java)
+            intent.putExtra("ArticleUrl", article.articleURL)
+            startActivity(intent)
+        }
     }
 }
