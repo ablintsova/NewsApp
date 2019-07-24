@@ -41,6 +41,7 @@ class MainInteractor(private val mainPresenter: IMainPresenter) :
             jsonData.execute(data)
         } else {
             Log.e("Main Activity", "onDownloadComplete failed with status $status. Error: $data")
+            onError(Exception(data))
         }
     }
 
@@ -52,5 +53,6 @@ class MainInteractor(private val mainPresenter: IMainPresenter) :
 
     override fun onError(exception: Exception) {
         Log.e("Main Activity", exception.message!!)
+        mainPresenter.onError(exception)
     }
 }

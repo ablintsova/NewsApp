@@ -4,8 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.*
 import com.example.newsapp.model.*
 import com.example.newsapp.presenter.IMainPresenter
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity(),
     RecyclerItemClickListener.IRecyclerClickListener {
 
     private val recyclerViewAdapter = RecyclerViewAdapter(ArrayList())
+    lateinit var swipeContainer: SwipeRefreshLayout
     lateinit var mainPresenter: IMainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity(),
 
         mainPresenter = MainPresenter(this)
         setRecyclerView()
-
+        setSwipeContainer()
         mainPresenter.getArticles()
     }
 
@@ -45,12 +48,32 @@ class MainActivity : AppCompatActivity(),
         rvArticleList.adapter = recyclerViewAdapter
     }
 
+    private fun setSwipeContainer() {
+        swipeContainer = findViewById(R.id.swipeContainer)
+        swipeContainer.setOnRefreshListener {
+            mainPresenter.getArticles()
+        }
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        )
+    }
+
+
     /* IMainView */
     override fun showArticles(data: List<Article>) {
+        recyclerViewAdapter.clearArticleList()
         recyclerViewAdapter.updateArticleList(data)
+        swipeContainer.isRefreshing = false
     }
 
     override fun onError(exception: Exception) {
+        swipeContainer.isRefreshing = false
+        Toast.makeText(this, getString(R.string.article_list_error_message), Toast.LENGTH_LONG).show()
         Log.e("Main Activity", exception.message!!)
     }
 

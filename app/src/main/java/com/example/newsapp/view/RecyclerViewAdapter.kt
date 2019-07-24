@@ -1,5 +1,6 @@
 package com.example.newsapp.view
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +30,12 @@ class RecyclerViewAdapter(private var articleList: List<Article>) : RecyclerView
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (articleList.isEmpty()) return
+        if (articleList.isEmpty()) {
+            holder.title.text = "No articles were found"
+            holder.date.text = ""
+            holder.description.text = "Please check your internet connection"
+            return
+        }
         val articleItem = articleList[position]
 
         Picasso.get()
@@ -50,5 +56,10 @@ class RecyclerViewAdapter(private var articleList: List<Article>) : RecyclerView
 
     fun getArticle(position: Int): Article? {
         return if(articleList.isNotEmpty()) articleList[position] else null
+    }
+
+    fun clearArticleList() {
+        articleList = emptyList()
+        notifyDataSetChanged()
     }
 }

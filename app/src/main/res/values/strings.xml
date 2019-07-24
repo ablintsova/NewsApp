@@ -8,4 +8,8 @@
     <string name="title_activity_full_article">NewsWebsiteActivity</string>
     <string name="splash_description">Cute seals on the splash screen</string>
     <string name="main_title">News</string>
+    <string name="no_articles_error_title">No articles were found</string>
+    <string name="no_articles_error_description">Please check your internet connection</string>
+    <string name="article_list_error_message">Couldn\'t refresh the article list, please check your internet connection
+    </string>
 </resources>
