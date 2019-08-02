@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.*
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun setRecyclerView() {
-        rvArticleList.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        rvArticleList.layoutManager = layoutManager
         rvArticleList.addOnItemTouchListener(
             RecyclerItemClickListener(
                 this,
@@ -45,6 +47,8 @@ class MainActivity : AppCompatActivity(),
                 this
             )
         )
+        val itemDivider = DividerItemDecoration(rvArticleList.context, layoutManager.orientation)
+        rvArticleList.addItemDecoration(itemDivider)
         rvArticleList.adapter = recyclerViewAdapter
     }
 
