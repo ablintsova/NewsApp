@@ -6,13 +6,16 @@ import com.example.newsapp.presenter.IMainPresenter
 import com.example.newsapp.presenter.MainPresenter
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class PresenterModule {
 
     @Provides
+    @Singleton
     fun providePresenter(interactor: IMainInteractor): IMainPresenter = MainPresenter(interactor)
 
     @Provides
+    @Singleton
     fun provideInteractor(): IMainInteractor = MainInteractor()
 }
