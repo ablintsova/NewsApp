@@ -15,12 +15,16 @@ import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
 
-class MainInteractor(private val mainPresenter: IMainPresenter) :
-    IMainInteractor {
+class MainInteractor : IMainInteractor {
 
+    private lateinit var mainPresenter: IMainPresenter
     private val tag = "MainInteractor"
 
     /* IMainInteractor */
+
+    override fun setPresenter(presenter: IMainPresenter) {
+        mainPresenter = presenter
+    }
 
     override fun getArticles() {
 

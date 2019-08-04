@@ -8,32 +8,34 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.*
+import com.example.newsapp.dagger.DaggerPresenterComponent
 import com.example.newsapp.model.*
-import com.example.newsapp.presenter.IMainPresenter
 import com.example.newsapp.presenter.MainPresenter
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.lang.Exception
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(),
     IMainView,
     RecyclerItemClickListener.IRecyclerClickListener {
 
     private val recyclerViewAdapter = RecyclerViewAdapter(ArrayList())
-    lateinit var swipeContainer: SwipeRefreshLayout
-    lateinit var mainPresenter: IMainPresenter
+
+    @Inject lateinit var mainPresenter: MainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        mainPresenter = MainPresenter(this)
         setRecyclerView()
         setSwipeContainer()
+
+        DaggerPresenterComponent.create().inject(this)
+        mainPresenter.setModules(this)
         mainPresenter.getArticles()
     }
 
@@ -53,7 +55,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun setSwipeContainer() {
-        swipeContainer = findViewById(R.id.swipeContainer)
         swipeContainer.setOnRefreshListener {
             mainPresenter.getArticles()
         }
