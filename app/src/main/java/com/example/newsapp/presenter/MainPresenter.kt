@@ -2,19 +2,20 @@ package com.example.newsapp.presenter
 
 import com.example.newsapp.model.Article
 import com.example.newsapp.model.IMainInteractor
-import com.example.newsapp.model.MainInteractor
 import com.example.newsapp.view.IMainView
 import java.lang.Exception
+import javax.inject.Inject
 
-class MainPresenter(private val mainView: IMainView) : IMainPresenter {
+class MainPresenter @Inject constructor(private val mainInteractor: IMainInteractor) : IMainPresenter {
 
-    private val mainInteractor: IMainInteractor
-
-    init {
-        mainInteractor = MainInteractor(this)
-    }
+    private lateinit var mainView: IMainView
 
     /* IMainPresenter */
+
+    override fun setModules(view: IMainView) {
+        mainView = view
+        mainInteractor.setPresenter(this)
+    }
 
     override fun getArticles() {
         mainInteractor.getArticles()
