@@ -1,4 +1,4 @@
-package com.example.newsapp.view
+package com.example.newsapp.view.util
 
 import android.content.Context
 import android.view.GestureDetector

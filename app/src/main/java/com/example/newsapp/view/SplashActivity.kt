@@ -9,7 +9,7 @@ import com.example.newsapp.R
 
 class SplashActivity : AppCompatActivity() {
 
-    private val splashTimeout: Long = 5000
+    private val splashTimeout: Long = 3000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

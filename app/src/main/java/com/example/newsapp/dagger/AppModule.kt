@@ -1,7 +1,9 @@
 package com.example.newsapp.dagger
 
-import com.example.newsapp.model.IMainInteractor
-import com.example.newsapp.model.MainInteractor
+import android.app.Application
+import android.content.Context
+import com.example.newsapp.model.interactor.IMainInteractor
+import com.example.newsapp.model.interactor.MainInteractor
 import com.example.newsapp.presenter.IMainPresenter
 import com.example.newsapp.presenter.MainPresenter
 import dagger.Module
@@ -9,7 +11,10 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class PresenterModule {
+class AppModule(private val app: Application) {
+    @Provides
+    @Singleton
+    fun provideContext(): Context = app
 
     @Provides
     @Singleton
@@ -17,5 +22,6 @@ class PresenterModule {
 
     @Provides
     @Singleton
-    fun provideInteractor(): IMainInteractor = MainInteractor()
+    fun provideInteractor(): IMainInteractor =
+        MainInteractor()
 }
