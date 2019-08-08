@@ -2,8 +2,6 @@ package com.example.newsapp.view
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.paging.PagedList
@@ -18,14 +16,11 @@ import com.example.newsapp.view.util.RecyclerViewAdapter
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.lang.Exception
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(),
-    IMainView {
+class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val CURRENT_PAGE = "currentPage"
         const val DEFAULT_PAGE = 1
     }
 
@@ -42,13 +37,7 @@ class MainActivity : AppCompatActivity(),
         setSwipeContainer()
 
         mainPresenter.setInteractor(appContext)
-        val page = savedInstanceState?.getInt(CURRENT_PAGE) ?: DEFAULT_PAGE
-        mainPresenter.showArticlesByPage(page)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(CURRENT_PAGE, mainPresenter.currentPageNumber() ?: DEFAULT_PAGE)
+        mainPresenter.showArticlesByPage(DEFAULT_PAGE)
     }
 
     private fun setRecyclerView() {
@@ -87,24 +76,5 @@ class MainActivity : AppCompatActivity(),
             android.R.color.holo_orange_light,
             android.R.color.holo_red_light
         )
-    }
-
-    /* IMainView */
-
-    override fun showArticles(data: List<Article>) {
-        /*if (swipeContainer.isRefreshing) {
-            recyclerViewAdapter.clearArticleList()
-            recyclerViewAdapter.rewriteArticleList(data)
-            swipeContainer.isRefreshing = false
-        } else {
-            recyclerViewAdapter.addArticlesToEndOfList(data)
-            isLoading = false
-        }*/
-    }
-
-    override fun onError(exception: Exception) {
-        swipeContainer.isRefreshing = false
-        Toast.makeText(this, getString(R.string.article_list_error_message), Toast.LENGTH_LONG).show()
-        Log.e("Main Activity", exception.message!!)
     }
 }

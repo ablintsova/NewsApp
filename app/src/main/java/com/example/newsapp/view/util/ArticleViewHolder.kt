@@ -23,7 +23,7 @@ class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
         view.setOnClickListener {
-            article?.articleURL?.let { url ->
+            article?.articleURL?.let {
                 val intent = Intent(view.context, FullArticleActivity::class.java)
                 intent.putExtra("ArticleUrl", article?.articleURL)
                 view.context.startActivity(intent)
@@ -34,8 +34,15 @@ class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(article: Article?) {
         this.article = article
 
+        // Picasso accepts null parameter in .load, but crashes if url is ""
+        val imageURL = if (article?.imageURL.isNullOrEmpty()) {
+            null
+        } else {
+            article?.imageURL
+        }
+
         Picasso.get()
-            .load(article?.imageURL)
+            .load(imageURL)
             .error(R.drawable.placeholder)
             .placeholder(R.drawable.placeholder)
             .into(thumbnail)

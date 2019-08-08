@@ -115,13 +115,11 @@ class MainInteractor : IMainInteractor {
             queryConstants.PAGE_SIZE,
             queryConstants.API_KEY
         )
-        call.enqueue(
-            object : Callback<ArticleResponse> {
+        call.enqueue(object : Callback<ArticleResponse> {
                 override fun onFailure(call: Call<ArticleResponse>, t: Throwable) {
                     // retrofit calls this on main thread so safe to call set value
                     networkState.value = NetworkState.error(t.message)
                 }
-
                 override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
                     ioExecutor.execute {
                         database.runInTransaction {

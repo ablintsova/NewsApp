@@ -32,12 +32,28 @@ class ArticlesBoundaryCallback(
                 sortBy = queryConstants.SORTING_TYPE,
                 apiKey = queryConstants.API_KEY,
                 query = queryConstants.QUERY
-                )
-                .enqueue(createWebserviceCallback(it))
+                ).enqueue(createWebserviceCallback(it))
         }
     }
 
-/**
+    /**
+     * User reached to the end of the list.
+     */
+    @MainThread
+    override fun onItemAtEndLoaded(itemAtEnd: Article) {
+        helper.runIfNotRunning(PagingRequestHelper.RequestType.AFTER) {
+            webservice.getArticles(
+                page = page,
+                pageSize = queryConstants.PAGE_SIZE,
+                date = queryConstants.DATE,
+                sortBy = queryConstants.SORTING_TYPE,
+                apiKey = queryConstants.API_KEY,
+                query = queryConstants.QUERY
+            ).enqueue(createWebserviceCallback(it))
+        }
+    }
+
+    /**
      * every time it gets new items, boundary callback simply inserts them into the database and
      * paging library takes care of refreshing the list if necessary.
      */

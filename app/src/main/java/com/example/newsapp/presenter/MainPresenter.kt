@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.newsapp.model.interactor.IMainInteractor
-import com.example.newsapp.view.IMainView
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(private val mainInteractor: IMainInteractor) : IMainPresenter {

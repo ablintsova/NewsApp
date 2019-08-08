@@ -66,7 +66,7 @@ class RecyclerViewAdapter(private val retryCallback: () -> Unit)
                 oldItem == newItem
 
             override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean =
-                oldItem.id == newItem.id
+                oldItem.title == newItem.title
         }
     }
 }
