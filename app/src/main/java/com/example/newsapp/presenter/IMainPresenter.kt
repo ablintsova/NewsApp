@@ -1,12 +1,12 @@
 package com.example.newsapp.presenter
 
-import com.example.newsapp.model.Article
-import com.example.newsapp.view.IMainView
-import java.lang.Exception
+import android.content.Context
 
 interface IMainPresenter {
-    fun setModules(view: IMainView)
-    fun getArticles()
-    fun showArticles(data: List<Article>)
-    fun onError(exception: Exception)
+    fun setInteractor(context: Context)
+    fun refresh()
+    fun showArticlesByPage(page: Int): Boolean
+    fun retry()
+    fun currentPageNumber(): Int?
+    fun updatePageNumber()
 }

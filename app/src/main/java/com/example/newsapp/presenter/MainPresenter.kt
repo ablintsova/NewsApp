@@ -1,31 +1,52 @@
 package com.example.newsapp.presenter
 
-import com.example.newsapp.model.Article
-import com.example.newsapp.model.IMainInteractor
-import com.example.newsapp.view.IMainView
-import java.lang.Exception
+import android.content.Context
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import com.example.newsapp.model.interactor.IMainInteractor
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(private val mainInteractor: IMainInteractor) : IMainPresenter {
 
-    private lateinit var mainView: IMainView
+    private val currentPage = MutableLiveData<Int>()
+    private val repoResult = Transformations.map(currentPage) {
+        mainInteractor.getArticlesByPage(it)
+    }
+    val articles = Transformations.switchMap(repoResult) { it.pagedList }!!
+    val networkState = Transformations.switchMap(repoResult) { it.networkState }!!
+    val refreshState = Transformations.switchMap(repoResult) { it.refreshState }!!
 
     /* IMainPresenter */
 
-    override fun setModules(view: IMainView) {
-        mainView = view
-        mainInteractor.setPresenter(this)
+    override fun setInteractor(context: Context) {
+        mainInteractor.setModules(this, context)
     }
 
-    override fun getArticles() {
-        mainInteractor.getArticles()
+    override fun refresh() {
+        repoResult.value?.refresh?.invoke()
     }
 
-    override fun showArticles(data: List<Article>) {
-        mainView.showArticles(data)
+    override fun showArticlesByPage(page: Int): Boolean {
+        if (currentPage.value == page) {
+            return false
+        }
+        currentPage.value = page
+        return true
     }
 
-    override fun onError(exception: Exception) {
-        mainView.onError(exception)
+    override fun retry() {
+        val listing = repoResult?.value
+        listing?.retry?.invoke()
+    }
+
+    override fun currentPageNumber(): Int? = currentPage.value
+
+    override fun updatePageNumber() {
+        currentPage.value = if (currentPage!!.value!! > 5) {
+            1
+        } else {
+            currentPage!!.value!!.inc()
+
+        }
     }
 }
