@@ -1,7 +1,7 @@
 package com.example.newsapp.view.util
 
 import android.content.Intent
-import android.net.Uri
+import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +48,7 @@ class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             .into(thumbnail)
 
         title.text = article?.title
-        date.text = article?.date
+        date.text = formatDate(article?.date)
         description.text = article?.description
     }
 
@@ -57,6 +57,16 @@ class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.article_list_item, parent, false)
             return ArticleViewHolder(view)
+        }
+
+        fun formatDate(date: String?): String {
+            return if (date.isNullOrEmpty()) {
+                ""
+            } else {
+                date
+                    .replace('T', ' ')
+                    .replace("Z", "")
+            }
         }
     }
 }
