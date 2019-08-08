@@ -15,8 +15,8 @@ class ArticlesBoundaryCallback(
     private val webservice: NewsApi,
     private val handleResponse: (Int, ArticleResponse?) -> Unit,
     private val ioExecutor: Executor,
-    private val page: Int)
-    : PagedList.BoundaryCallback<Article>() {
+    private val page: Int
+) : PagedList.BoundaryCallback<Article>() {
 
     private val queryConstants = QueryConstants
     val helper = PagingRequestHelper(ioExecutor)
@@ -32,7 +32,7 @@ class ArticlesBoundaryCallback(
                 sortBy = queryConstants.SORTING_TYPE,
                 apiKey = queryConstants.API_KEY,
                 query = queryConstants.QUERY
-                ).enqueue(createWebserviceCallback(it))
+            ).enqueue(createWebserviceCallback(it))
         }
     }
 
@@ -58,11 +58,13 @@ class ArticlesBoundaryCallback(
      * paging library takes care of refreshing the list if necessary.
      */
 
-    private fun insertItemsIntoDb(page: Int,
-                                  response: Response<ArticleResponse>,
-                                  it: PagingRequestHelper.Request.Callback) {
+    private fun insertItemsIntoDb(
+        page: Int,
+        response: Response<ArticleResponse>,
+        it: PagingRequestHelper.Request.Callback
+    ) {
         ioExecutor.execute {
-            handleResponse(page,response.body())
+            handleResponse(page, response.body())
             it.recordSuccess()
         }
     }
@@ -80,8 +82,9 @@ class ArticlesBoundaryCallback(
 
             override fun onResponse(
                 call: Call<ArticleResponse>,
-                response: Response<ArticleResponse>) {
-                insertItemsIntoDb(page,response, it)
+                response: Response<ArticleResponse>
+            ) {
+                insertItemsIntoDb(page, response, it)
             }
         }
     }

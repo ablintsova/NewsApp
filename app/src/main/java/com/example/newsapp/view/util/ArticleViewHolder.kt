@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso
 
 class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    private var article : Article? = null
+    private var article: Article? = null
     private var thumbnail: ImageView = view.findViewById(R.id.imgArticle)
     private var title: TextView = view.findViewById(R.id.tvTitle)
     private var date: TextView = view.findViewById(R.id.tvDate)

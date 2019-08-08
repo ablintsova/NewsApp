@@ -6,4 +6,5 @@ object QueryConstants {
     const val DATE = "2019-04-00"
     const val API_KEY = "26eddb253e7840f988aec61f2ece2907"
     const val PAGE_SIZE: Int = 5
+    const val BASE_URL = "https://newsapi.org/"
 }

@@ -30,12 +30,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import java.util.concurrent.Executors
+import javax.inject.Singleton
 import javax.net.ssl.*
 
 class MainInteractor : IMainInteractor {
 
     private lateinit var mainPresenter: IMainPresenter
     private lateinit var applicationContext: Context
+    @Singleton
     private lateinit var database: ArticlesDatabase
     private lateinit var newsApi: NewsApi
     private lateinit var dao: ArticlesDao
@@ -52,8 +54,10 @@ class MainInteractor : IMainInteractor {
         applicationContext = context
 
         newsApi = getRetrofitClient().create(NewsApi::class.java)
-        database = Room.databaseBuilder(applicationContext,
-            ArticlesDatabase::class.java, "database").build()
+        database = Room.databaseBuilder(
+            applicationContext,
+            ArticlesDatabase::class.java, "database"
+        ).build()
         dao = database.articles()
     }
 
@@ -116,78 +120,77 @@ class MainInteractor : IMainInteractor {
             queryConstants.API_KEY
         )
         call.enqueue(object : Callback<ArticleResponse> {
-                override fun onFailure(call: Call<ArticleResponse>, t: Throwable) {
-                    // retrofit calls this on main thread so safe to call set value
-                    networkState.value = NetworkState.error(t.message)
-                }
-                override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
-                    ioExecutor.execute {
-                        database.runInTransaction {
-                            dao.deleteArticlesOnPage(page)
-                            insertResultIntoDb(page, response.body())
-                        }
-                        // since we are in bg thread now, post the result.
-                        networkState.postValue(NetworkState.LOADED)
-                    }
-                    mainPresenter.updatePageNumber()
-                }
+            override fun onFailure(call: Call<ArticleResponse>, t: Throwable) {
+                // retrofit calls this on main thread so safe to call set value
+                networkState.value = NetworkState.error(t.message)
             }
+
+            override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
+                ioExecutor.execute {
+                    database.runInTransaction {
+                        dao.deleteArticlesOnPage(page)
+                        insertResultIntoDb(page, response.body())
+                    }
+                    // since we are in bg thread now, post the result.
+                    networkState.postValue(NetworkState.LOADED)
+                }
+                mainPresenter.updatePageNumber()
+            }
+        }
         )
         return networkState
     }
 
-    companion object {
 
-        private fun getRetrofitClient(): Retrofit {
-            val httpClient = getUnsafeOkHttpClient()
-            return Retrofit.Builder()
-                .baseUrl("https://newsapi.org/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build()
-        }
+    private fun getRetrofitClient(): Retrofit {
+        val httpClient = getUnsafeOkHttpClient()
+        return Retrofit.Builder()
+            .baseUrl(queryConstants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(httpClient.build())
+            .build()
+    }
 
-        // Unsafe workaround for HTTPS and API <20
-        private fun getUnsafeOkHttpClient(): OkHttpClient.Builder {
-            try {
-                // Create a trust manager that does not validate certificate chains
-                val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+    // Unsafe workaround for HTTPS and API <20
+    private fun getUnsafeOkHttpClient(): OkHttpClient.Builder {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
 
-                    override fun getAcceptedIssuers(): Array<X509Certificate> {
-                        return arrayOf()
-                    }
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
 
-                    @Throws(CertificateException::class)
-                    override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-                    }
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
 
-                    @Throws(CertificateException::class)
-                    override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+            })
+
+            // Install the all-trusting trust manager
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+
+            // Create an ssl socket factory with our all-trusting manager
+            val sslSocketFactory = sslContext.socketFactory
+
+            // Using logging to see the full api request
+            val logging = HttpLoggingInterceptor()
+            logging.level = HttpLoggingInterceptor.Level.BODY
+
+            return OkHttpClient.Builder()
+                .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+                .addInterceptor(logging)
+                .hostnameVerifier(object : HostnameVerifier {
+                    override fun verify(hostname: String, session: SSLSession): Boolean {
+                        return true
                     }
                 })
-
-                // Install the all-trusting trust manager
-                val sslContext = SSLContext.getInstance("SSL")
-                sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-
-                // Create an ssl socket factory with our all-trusting manager
-                val sslSocketFactory = sslContext.socketFactory
-
-                // Using logging to see the full api request
-                val logging = HttpLoggingInterceptor()
-                logging.level = HttpLoggingInterceptor.Level.BODY
-
-                return OkHttpClient.Builder()
-                    .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
-                    .addInterceptor(logging)
-                    .hostnameVerifier(object : HostnameVerifier {
-                        override fun verify(hostname: String, session: SSLSession): Boolean {
-                            return true
-                        }
-                    })
-            } catch (e: Exception) {
-                throw RuntimeException(e)
-            }
+        } catch (e: Exception) {
+            throw RuntimeException(e)
         }
     }
 }

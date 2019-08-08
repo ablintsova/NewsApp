@@ -24,8 +24,10 @@ class MainActivity : AppCompatActivity() {
         const val DEFAULT_PAGE = 1
     }
 
-    @Inject lateinit var mainPresenter: MainPresenter
-    @Inject lateinit var appContext: Context
+    @Inject
+    lateinit var mainPresenter: MainPresenter
+    @Inject
+    lateinit var appContext: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

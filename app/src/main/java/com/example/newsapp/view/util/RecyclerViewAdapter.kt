@@ -8,8 +8,8 @@ import com.example.newsapp.R
 import com.example.newsapp.model.Article
 import com.example.newsapp.model.network.NetworkState
 
-class RecyclerViewAdapter(private val retryCallback: () -> Unit)
-    : PagedListAdapter<Article, RecyclerView.ViewHolder>(ARTICLE_COMPARATOR) {
+class RecyclerViewAdapter(private val retryCallback: () -> Unit) :
+    PagedListAdapter<Article, RecyclerView.ViewHolder>(ARTICLE_COMPARATOR) {
 
     private var networkState: NetworkState? = null
 
@@ -17,11 +17,12 @@ class RecyclerViewAdapter(private val retryCallback: () -> Unit)
         when (getItemViewType(position)) {
             R.layout.article_list_item -> (holder as ArticleViewHolder).bind(getItem(position))
             R.layout.network_state_item -> (holder as NetworkStateItemViewHolder).bindTo(
-                networkState)
+                networkState
+            )
         }
     }
 
-   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             R.layout.article_list_item -> ArticleViewHolder.create(parent)
             R.layout.network_state_item -> NetworkStateItemViewHolder.create(parent, retryCallback)

@@ -1,4 +1,5 @@
 package com.example.newsapp.model.database
+
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.newsapp.model.Article
@@ -8,6 +9,6 @@ import com.example.newsapp.model.Article
     version = 1,
     exportSchema = false
 )
-abstract class ArticlesDatabase: RoomDatabase() {
-    abstract fun articles() : ArticlesDao
+abstract class ArticlesDatabase : RoomDatabase() {
+    abstract fun articles(): ArticlesDao
 }

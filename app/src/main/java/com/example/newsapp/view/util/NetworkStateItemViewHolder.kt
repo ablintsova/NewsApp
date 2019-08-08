@@ -11,17 +11,20 @@ import com.example.newsapp.R
 import com.example.newsapp.model.network.NetworkState
 import com.example.newsapp.model.network.Status
 
-class NetworkStateItemViewHolder(view: View,
-                                 private val retryCallback: () -> Unit)
-    : RecyclerView.ViewHolder(view) {
+class NetworkStateItemViewHolder(
+    view: View,
+    private val retryCallback: () -> Unit
+) : RecyclerView.ViewHolder(view) {
     private val progressBar = view.findViewById<ProgressBar>(R.id.progress_bar)
     private val retry = view.findViewById<Button>(R.id.retry_button)
     private val errorMsg = view.findViewById<TextView>(R.id.error_msg)
+
     init {
         retry.setOnClickListener {
             retryCallback()
         }
     }
+
     fun bindTo(networkState: NetworkState?) {
         progressBar.visibility = toVisibility(networkState?.status == Status.RUNNING)
         retry.visibility = toVisibility(networkState?.status == Status.FAILED)
@@ -36,7 +39,7 @@ class NetworkStateItemViewHolder(view: View,
             return NetworkStateItemViewHolder(view, retryCallback)
         }
 
-        fun toVisibility(constraint : Boolean): Int {
+        fun toVisibility(constraint: Boolean): Int {
             return if (constraint) {
                 View.VISIBLE
             } else {
